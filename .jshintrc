@@ -1,0 +1,12 @@
+{
+	"browser": false,
+    "node": true,
+    "esversion": 8,
+
+	"undef": true,
+	"unused": true,
+	"eqeqeq": true,
+	"latedef": true,
+	"singleGroups": true,
+	"eqnull": true
+}

@@ -1,0 +1,32 @@
+{
+	"name": "haruo",
+	"version": "0.0.1-SNAPSHOT",
+	"description": "Locally-sourced domain-specific Discord bot, intended for experiments only.",
+	"main": "src/init.js",
+	"engines": {
+		"node": ">=8.1.0",
+		"npm": "^6.0.0"
+	},
+	"scripts": {
+		"start": "node src/init.js",
+		"lint": "eslint ./src"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Lyonlancer5/Haruo.git"
+	},
+	"author": "Lyonlancer5",
+	"license": "BSD-3-Clause",
+	"bugs": {
+		"url": "https://github.com/Lyonlancer5/Haruo/issues"
+	},
+	"homepage": "https://github.com/Lyonlancer5/Haruo",
+	"dependencies": {
+		"eris": "github:abalabahaha/eris#dev",
+		"got": "^11.1.0"
+	},
+	"devDependencies": {
+		"eslint": "^6.8.0",
+		"jshint": "^2.11.0"
+	}
+}
