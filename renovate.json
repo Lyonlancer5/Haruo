@@ -1,5 +1,12 @@
 {
   "extends": [
     "config:base"
-  ]
+  ],
+  "ignoreDeps": [
+    "eslint", "jshint"
+  ],
+  "masterIssue": true,
+  "masterIssueTitle": "Dependency Management (Renovate)",
+  "schedule": ["after 6pm on Sunday"],
+  "timezone": "Asia/Manila"
 }
