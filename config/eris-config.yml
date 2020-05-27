@@ -1,0 +1,21 @@
+# Eris configuration file
+# Provided values are intended for project scope.
+
+# For full documentation, refer to https://abal.moe/Eris/docs/Client
+# To configure most runtime aspects of this project,
+# see main-config.template.yml OR run InitialConfiguration.js
+
+compress: true
+defaultImageFormat: 'png'
+defaultImageSize: 512
+disableEvents:
+    PRESENCE_UPDATE: true
+    TYPING_START: true
+    VOICE_STATE_UPDATE: true
+intents:
+    # Guilds
+    - 'guilds'
+    - 'guildMessages'
+    # DMs
+    - 'directMessages'
+messageLimit: 127

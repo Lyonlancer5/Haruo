@@ -1,3 +1,7 @@
+# Project-specific additions
+config/main-config.yml
+cache/
+
 # Logs
 logs
 *.log

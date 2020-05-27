@@ -1,0 +1,27 @@
+# Haruo configuration file
+
+# To configure Eris, the underlying framework,
+# see eris-config.yml
+
+general:
+    token: ''
+    ownerID: ''
+    prefix: ''
+
+datastore:
+    implementation: 'redis'
+    url: 'redis://127.0.0.1/0'
+
+development:
+    debug: false
+    promiseVerbose: false
+
+discord:
+    status: 'online'
+    game:
+        url: null
+        type: 0
+        name: ''
+
+treediagram:
+    __TODO: 0

@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "charset": "utf-8",
+        "module": "commonJS"
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

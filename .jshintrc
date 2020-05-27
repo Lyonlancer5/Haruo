@@ -1,7 +1,7 @@
 {
 	"browser": false,
     "node": true,
-    "esversion": 8,
+    "esversion": 10,
 
 	"undef": true,
 	"unused": true,
