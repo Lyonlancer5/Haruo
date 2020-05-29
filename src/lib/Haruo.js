@@ -1,5 +1,6 @@
-const Eris = require('eris');
-const {getFormattedVersion} = require(`./Version`);
+const Eris = require("eris");
+
+const { getFormattedVersion } = require("./Version");
 
 /**
  * Extension of Eris.Client
@@ -8,7 +9,6 @@ const {getFormattedVersion} = require(`./Version`);
  */
 class Haruo extends Eris.Client {
     constructor(config) {
-
         super(config.general.token, config.eris);
         this.config = config;
     }
@@ -24,14 +24,20 @@ class Haruo extends Eris.Client {
 
     getUptimeFormatted() {
         let time = this.uptime / 1000;
-        let seconds = time % 60;
+
+        let seconds = Math.floor(time % 60);
+        if (seconds < 10) seconds = `0${seconds}`;
         time /= 60;
-        let minutes = time % 60;
+
+        let minutes = Math.floor(time % 60);
+        if (minutes < 10) minutes = `0${minutes}`;
         time /= 60;
-        let hours = time % 24;
+
+        let hours = Math.floor(time % 24);
+        if (hours < 10) hours = `0${hours}`;
         time /= 24;
 
-        return `${Math.floor(time)} days, ${Math.floor(hours)}:${Math.floor(minutes)}:${Math.floor(seconds)}`;
+        return `${Math.floor(time)} days, ${hours}:${minutes}:${seconds}`;
     }
 
     toString() {

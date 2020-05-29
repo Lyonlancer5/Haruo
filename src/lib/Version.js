@@ -2,19 +2,20 @@
  * @file Version stuff
  * @author Lyonlancer5
  */
-const {existsSync, readFileSync} = require('fs');
-const {resolve} = require('path');
-const {projectDir} = require('./Directories');
+const { existsSync, readFileSync } = require("fs");
+const { resolve } = require("path");
+
+const { projectDir } = require("./Directories");
 
 /**
  * @type {String}
  */
-let commit;
+let commitStr;
 
 /**
  * @type {String}
  */
-let version;
+let versionStr;
 
 /**
  * Gets the current git hash, assuming git's presence.
@@ -23,20 +24,22 @@ let version;
  * @returns {String} The git hash, or an empty String if not pulled from git
  */
 function getGitHash(truncate = false) {
-    if (!commit) {
-        let git_head = resolve(projectDir, '.git/', 'HEAD');
-        if (!existsSync(git_head))
-            commit = '';
+    if (!commitStr) {
+        const gitHead = resolve(projectDir, ".git/", "HEAD");
+        if (!existsSync(gitHead)) commitStr = "";
         else {
-            let ref = resolve(projectDir, '.git/', readFileSync(git_head).toString().slice(5).replace('\n', ''));
+            const ref = resolve(
+                projectDir,
+                ".git/",
+                readFileSync(gitHead).toString().slice(5).replace("\n", "")
+            );
             if (existsSync(ref))
-                commit = readFileSync(ref).toString().replace('\n', '');
-            else
-                commit = '';
+                commitStr = readFileSync(ref).toString().replace("\n", "");
+            else commitStr = "";
         }
     }
 
-    return truncate ? commit.substring(0, 7) : commit;
+    return truncate ? commitStr.substring(0, 7) : commitStr;
 }
 
 /**
@@ -45,15 +48,17 @@ function getGitHash(truncate = false) {
  * @returns {String} The version as specified in `package.json`, or 'UNKNOWN' if it 404'd
  */
 function getVersion() {
-    if (!version) {
+    if (!versionStr)
         try {
-            version = JSON.parse(readFileSync(resolve(projectDir, 'package.json'))).version;
-        } catch(_) {
-            version = 'UNKNOWN';
+            const { version } = JSON.parse(
+                readFileSync(resolve(projectDir, "package.json"))
+            );
+            versionStr = version;
+        } catch (_) {
+            versionStr = "UNKNOWN";
         }
-    }
 
-    return version;
+    return versionStr;
 }
 
 /**
@@ -63,4 +68,4 @@ function getFormattedVersion() {
     return `Haruo ${getVersion()} [git-${getGitHash(true)}]`;
 }
 
-module.exports = {getGitHash, getVersion, getFormattedVersion};
+module.exports = { getGitHash, getVersion, getFormattedVersion };

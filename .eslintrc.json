@@ -6,8 +6,6 @@
     // Overrides for this specific project
     "rules": {
         // Module reloading relies on dynamic require()
-        "import/no-dynamic-require": 0,
-        // For init and utility scripts, may be removed in the future
-        "no-sync": [1, { "allowAtRootLevel": true }]
+        "import/no-dynamic-require": 0
     }
 }
