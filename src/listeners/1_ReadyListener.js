@@ -1,5 +1,7 @@
+const Logger = require("./../lib/Logger");
+
 function onReady(bot) {
-    Logv.info(`${bot.toString()} | Online`);
+    Logger.info(`${bot.toString()} | Online`);
     bot.editStatus("online", { name: "Haruo Indev", type: 0 });
 }
 

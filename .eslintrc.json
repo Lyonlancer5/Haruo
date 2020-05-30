@@ -1,8 +1,5 @@
 {
     "extends": ["clarity"],
-    "globals": {
-        "Logv": false
-    },
     // Overrides for this specific project
     "rules": {
         // Module reloading relies on dynamic require()

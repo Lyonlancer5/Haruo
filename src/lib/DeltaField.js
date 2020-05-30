@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
+const Logger = require("./Logger");
+
 const lstDir = path.resolve(__dirname, "../", "listeners");
 const listeners = new Map();
 
@@ -20,13 +22,19 @@ class DeltaField {
     static loadListeners(bot) {
         fs.readdir(lstDir, (err, files) => {
             if (err) {
-                Logv.error("Event listeners could not be located.");
+                Logger.error("Event listeners could not be located.");
                 console.error(err);
                 return;
             }
 
             files
-                .filter((v) => v.search(/\d{1}_/g) !== -1 && v.endsWith(".js"))
+                .filter(
+                    (v) =>
+                        // Part 1, enforce "[0-9]_" prefix
+                        v.search(/\d{1}_/g) !== -1 &&
+                        // Part 2, kekw on the file extension because we madlads
+                        v.search(/\.(J|j)(S|s)/g) !== -1
+                )
                 .sort()
                 .forEach((mod) => {
                     try {
@@ -34,10 +42,10 @@ class DeltaField {
                         if (!listeners.get(mod)) {
                             lmod.load(bot); // assumes that the function exists, which *should*
                             listeners.set(mod, lmod);
-                            Logv.misc(`Loaded event listener: ${mod}`);
+                            Logger.misc(`Loaded event listener: ${mod}`);
                         }
                     } catch (e2) {
-                        Logv.error(`Failed to load event listener: ${mod}`);
+                        Logger.error(`Failed to load event listener: ${mod}`);
                         console.error(e2);
                     }
                 });

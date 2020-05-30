@@ -11,7 +11,6 @@ const config = HaruoConf.get();
 
 // Globals/overrides
 global.Promise = require("bluebird");
-global.Logv = require("./lib/Logger");
 
 // Bot setup
 const bot = new Haruo(config);
