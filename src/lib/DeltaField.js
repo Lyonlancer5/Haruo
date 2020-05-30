@@ -1,4 +1,4 @@
-const fs = require("fs");
+const fs = require("fs").promises;
 const path = require("path");
 
 const Logger = require("./Logger");
@@ -20,36 +20,42 @@ class DeltaField {
      * @param {Haruo} bot The bot instance
      */
     static loadListeners(bot) {
-        fs.readdir(lstDir, (err, files) => {
-            if (err) {
-                Logger.error("Event listeners could not be located.");
-                console.error(err);
-                return;
-            }
-
-            files
-                .filter(
-                    (v) =>
-                        // Part 1, enforce "[0-9]_" prefix
-                        v.search(/\d{1}_/g) !== -1 &&
-                        // Part 2, kekw on the file extension because we madlads
-                        v.search(/\.(J|j)(S|s)/g) !== -1
-                )
-                .sort()
-                .forEach((mod) => {
-                    try {
-                        const lmod = require(path.resolve(lstDir, mod));
-                        if (!listeners.get(mod)) {
-                            lmod.load(bot); // assumes that the function exists, which *should*
-                            listeners.set(mod, lmod);
-                            Logger.misc(`Loaded event listener: ${mod}`);
+        fs.readdir(lstDir, { withFileTypes: true }).then(
+            (files) => {
+                files
+                    .filter(
+                        (v) =>
+                            // Part 1, check if its actually a file
+                            v.isFile() &&
+                            // Part 2, enforce "[0-9]_" prefix
+                            v.name.search(/\d{1}_/g) !== -1 &&
+                            // Part 3, kekw on the file extension because we madlads
+                            v.name.search(/\.(J|j)(S|s)/g) !== -1
+                    )
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .forEach((mod) => {
+                        try {
+                            const nmod = mod.name;
+                            const lmod = require(path.resolve(lstDir, nmod));
+                            if (!listeners.get(nmod)) {
+                                lmod.load(bot);
+                                listeners.set(nmod, lmod);
+                                Logger.misc(`Loaded event listener: ${nmod}`);
+                            }
+                        } catch (err) {
+                            Logger.error(
+                                `Failed to load event listener: ${mod.name}`
+                            );
+                            console.err(err);
                         }
-                    } catch (e2) {
-                        Logger.error(`Failed to load event listener: ${mod}`);
-                        console.error(e2);
-                    }
-                });
-        });
+                    });
+            },
+
+            (err) => {
+                Logger.error("Could not load event listeners");
+                console.err(err);
+            }
+        );
     }
 }
 
