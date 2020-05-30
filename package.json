@@ -24,6 +24,7 @@
 	"homepage": "https://github.com/Lyonlancer5/Haruo",
 	"dependencies": {
 		"bluebird": "^3.7.2",
+		"dotenv": "^8.2.0",
 		"eris": "github:abalabahaha/eris#dev",
 		"got": "^11.1.4",
 		"yamljs": "^0.3.0"

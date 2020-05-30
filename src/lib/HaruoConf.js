@@ -2,6 +2,7 @@
  * @file Configuration processor for Haruo
  */
 
+const dotenv = require("dotenv");
 const YAML = require("yamljs");
 
 const { existsSync } = require("fs");
@@ -9,6 +10,37 @@ const { resolve } = require("path");
 
 const { configDir } = require("./Directories");
 const Logger = require("./Logger");
+
+/**
+ * [Internal] Formats the key string to the key used in the JS object.
+ *
+ * @param {String} str Key string
+ * @param {Number} len Header length
+ * @returns {String} Properly-formatted key
+ */
+function formatKey(str, len) {
+    let res = str.slice(len).toLowerCase();
+    ["id", "url"].forEach(
+        (val) => (res = res.replace(val, (s) => s.toUpperCase()))
+    );
+    return res.replace(/_./g, (m, i, s) =>
+        /[A-Z]/.test(s[i - 1]) ? m[1] : m[1].toUpperCase()
+    );
+}
+
+/**
+ * [Internal] Used to turn env configuration key-value pairs to JS objects.
+ *
+ * @param {[String, String]} env Object.entries(process.env)
+ * @param {String} header Header to check for
+ * @returns {Object} A JS object containing the key-value pairs as sub-objects
+ */
+function convert(env, header) {
+    const retval = env
+        .filter((val) => val[0].startsWith(header))
+        .map(([key, val]) => ({ [formatKey(key, header.length)]: val }));
+    return retval.reduce((k, v) => Object.assign(k, v), {});
+}
 
 /**
  * Haruo configuration
@@ -60,7 +92,7 @@ class HaruoConf {
      * Configuration parser.
      * If called without parameters, uses [process.env] as the configuration.
      *
-     * @param {String} file Path to configuration, may be absolute, relative or null.
+     * @param {String} file Path to configuration.
      * @returns {HaruoConf} Configuration
      * @see process.env
      */
@@ -73,7 +105,19 @@ class HaruoConf {
                 Logger.warn("Configuration error", err);
             }
             Logger.misc(`Configuration loaded from ${file}`);
-        } else Logger.warn("Configuration missing");
+        } else {
+            const dtcf = dotenv.config();
+            if (dtcf.error) {
+                Logger.warn("Failed to load configuration from .env");
+                throw dtcf.error;
+            }
+
+            const env = Object.entries(process.env);
+            hconf = {
+                general: convert(env, "HARUO_GENERAL_"),
+            };
+            Logger.misc("Configuration loaded from .env");
+        }
 
         try {
             hconf.eris = YAML.load(resolve(configDir, "eris-config.yml"));
