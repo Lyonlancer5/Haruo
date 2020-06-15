@@ -2,6 +2,15 @@
     "extends": ["config:base"],
     "masterIssue": true,
     "masterIssueTitle": "Dependency Management (Renovate)",
+    "requiredStatusChecks": null,
     "schedule": ["after 6pm on Sunday"],
-    "timezone": "Asia/Manila"
+    "timezone": "Asia/Manila",
+
+    "packageRules": [
+        {
+            "updateTypes": ["minor", "patch", "pin", "digest"],
+            "automerge": true,
+            "automergeType": "branch"
+        }
+    ]
 }
