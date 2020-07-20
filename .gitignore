@@ -1,6 +1,7 @@
 # Project-specific additions
 config/main-config.yml
 cache/
+runtime/
 
 # Logs
 logs
