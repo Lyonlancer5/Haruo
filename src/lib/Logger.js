@@ -10,10 +10,11 @@ class Logger {
         return `[${hr}:${min}:${sec}]`;
     }
 
-    static log(header, msg) {
+    static log(header, msg, err) {
         msg.split(/\r?\n/g).forEach((t) =>
             console.log(`${this.timestamp()} ${header} ${t}\x1b[0m`)
         );
+        if (err) console.error(err);
     }
 
     static misc(msg) {
@@ -25,18 +26,15 @@ class Logger {
     }
 
     static warn(msg, err) {
-        this.log("\x1b[33;49m[WARN]: ", `${msg}${err ? `\n${err}` : ""}`);
+        this.log("\x1b[33;49m[WARN]: ", msg, err);
     }
 
     static error(msg, err) {
-        this.log("\x1b[31;49m[ERROR]: ", `${msg}${err ? `\n${err}` : ""}`);
+        this.log("\x1b[31;49m[ERROR]: ", msg, err);
     }
 
     static fatal(msg, err) {
-        this.log(
-            "\x1b[5;37;41m[FATAL]\x1b[25;31;49m: ",
-            `${msg}${err ? `\n${err}` : ""}`
-        );
+        this.log("\x1b[5;37;41m[FATAL]\x1b[25;31;49m: ", msg, err);
     }
 }
 

@@ -10,6 +10,7 @@
     },
     "scripts": {
         "start": "node src/init.js",
+        "test-offline": "node src/init.js --test-offline",
         "lint": "eslint ./src"
     },
     "repository": {

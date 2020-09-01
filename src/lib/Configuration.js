@@ -90,7 +90,7 @@ class HaruoConf {
 
     /**
      * Configuration parser.
-     * If called without parameters, uses [process.env] as the configuration.
+     * If called without parameters or with null, uses [process.env] as the configuration.
      *
      * @param {String} file Path to configuration.
      * @returns {HaruoConf} Configuration
@@ -98,6 +98,7 @@ class HaruoConf {
      */
     static get(file = resolve(configDir, "main-config.yml")) {
         let hconf;
+
         if (file && existsSync(file)) {
             try {
                 hconf = YAML.load(file);
@@ -121,9 +122,11 @@ class HaruoConf {
 
         try {
             hconf.eris = YAML.load(resolve(configDir, "eris-config.yml"));
+            Logger.info("Loaded underlying eris configuration");
         } catch (e) {
             Logger.warn(
-                "Base eris configuration missing, this may cause problems."
+                "Underlying eris configuration missing, this may cause problems.",
+                e
             );
         }
         return new HaruoConf(hconf);
