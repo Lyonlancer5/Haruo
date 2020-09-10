@@ -4,8 +4,6 @@
 
 // process launch arguments
 const offlineMode = process.argv.includes("--test-offline");
-if (process.argv.includes("--use-bluebird"))
-    global.Promise = require("bluebird");
 
 // Import dependencies
 const fs = require("fs").promises;
