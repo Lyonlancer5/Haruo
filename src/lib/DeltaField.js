@@ -13,16 +13,22 @@ const modulesDir = path.resolve(__dirname, "../", "modules/");
 const foundModules = [];
 
 /**
- * Mod paths <filename::String, path::String>
+ * Module paths <filename::String, path::String>
  * @type Map<String, String>
  */
 const modulePaths = new Map();
 
 /**
- * Mod instances <name::String, instance::Object>
+ * Module instances <name::String, instance::Object>
  * @type Map<String, Object>
  */
 const loadedModules = new Map();
+
+/**
+ * Ignored modules <name::String>
+ * @type Set<String>
+ */
+const ignoredModules = new Set();
 
 // Private functions
 
@@ -44,21 +50,36 @@ function __modLoad(dir, name, group, bot, ignoreForcedUnload = false) {
     if (!name) throw new TypeError("Module file name cannot be undefined");
     if (!group) throw new TypeError("Module group cannot be undefined");
     if (!bot) throw new TypeError("Bot instance cannot be undefined");
-    if (ignoreForcedUnload) Logger.info("TODO Flag currently unused");
+
+    if (ignoredModules.has(name))
+        if (!ignoreForcedUnload) {
+            Logger.warn(
+                `Ignoring module ${name}, due to previous errors or was manually set`
+            );
+            return false;
+        } else
+            Logger.misc(
+                `Module '${name}' is in ignore list, but is going to be loaded anyway`
+            );
 
     const modPath = path.resolve(dir, name);
-    if (!group.get(name)) {
-        const modInstance = require(modPath); // Failure point
+    if (!group.has(name))
+        try {
+            const modInstance = require(modPath); // Failure point
 
-        if (typeof modInstance.load !== "function") {
-            Logger.error(`Module '${name}' has no load function, skipping`);
-            return false;
+            if (typeof modInstance.load !== "function") {
+                Logger.error(`Module '${name}' has no load function, skipping`);
+                return false;
+            }
+            modInstance.load(bot); // Another failure point
+            modulePaths.set(name, modPath);
+            group.set(name, modInstance);
+        } catch (err) {
+            delete require.cache[modPath];
+            ignoredModules.add(name);
+            throw err;
         }
 
-        modInstance.load(bot); // Another failure point
-        modulePaths.set(name, modPath);
-        group.set(name, modInstance);
-    }
     // Default to true if loaded
     return true;
 }
@@ -79,11 +100,21 @@ function __modUnload(name, group, bot, setForcedUnload = false) {
 
     const modInstance = group.get(name);
     if (modInstance) {
-        if (typeof modInstance.unload === "function") modInstance.unload();
+        if (typeof modInstance.unload === "function")
+            try {
+                modInstance.unload(bot);
+            } catch (err) {
+                Logger.warn(
+                    `Error thrown while running cleanup for [${name}]`,
+                    err
+                );
+            }
+
         group.delete(name);
         delete require.cache[modulePaths.get(name)];
         modulePaths.delete(name);
-        if (setForcedUnload) Logger.info("TODO Flag currently unused");
+        if (setForcedUnload) ignoredModules.add(name);
+        else ignoredModules.delete(name);
     }
 }
 
@@ -134,8 +165,8 @@ class DeltaField {
         try {
             __modUnload(name, loadedModules, bot);
             // Re-read from disk
-            __modLoad(modulesDir, name, loadedModules, bot);
-            Logger.misc(`Reloaded module: ${name}`);
+            if (__modLoad(modulesDir, name, loadedModules, bot))
+                Logger.misc(`Reloaded module: ${name}`);
         } catch (err) {
             Logger.error(`Failed to reload module: ${name}`, err);
         }
@@ -151,15 +182,20 @@ class DeltaField {
                 .readdir(modulesDir, { withFileTypes: true })
                 .then((dirs) => {
                     foundModules.length = 0; // Array.clear(): ???
-                    filterNonJS(dirs).forEach((dir) =>
-                        foundModules.push(dir.name)
-                    );
+                    filterNonJS(dirs).forEach((dir) => {
+                        foundModules.push(dir.name);
+                        Logger.info(`Found module ${dir.name}`);
+                    });
                     Logger.info(
                         `Modules: found ${foundModules.length} modules`
                     );
                     return foundModules;
                 });
         return foundModules;
+    }
+
+    static isModuleLoaded(name) {
+        return loadedModules.has(name);
     }
 }
 
