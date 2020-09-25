@@ -31,7 +31,10 @@ async function getCacheDir(useShared = false) {
     if (useShared) return cacheDir;
 
     if (!runtimeCacheDir) {
-        runtimeCacheDir = path.resolve(cacheDir, Date.now());
+        runtimeCacheDir = path.resolve(
+            cacheDir,
+            `${Math.round(Math.random() * 10000)}/`
+        );
         fs.mkdir(runtimeCacheDir).catch((err) => {
             // EEXIST should not happen in theory
             // But who am I to assume?
