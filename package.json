@@ -1,7 +1,7 @@
 {
     "name": "haruo",
     "version": "0.0.1-SNAPSHOT",
-    "description": "Locally-sourced domain-specific Discord bot, intended for experiments only.",
+    "description": "Incomplete experimental bot, used by other personal projects.",
     "main": "src/init.js",
     "type": "commonjs",
     "engines": {

@@ -1,7 +1,9 @@
 # Project-specific additions
-config/main-config.yml
 cache/
-runtime/
+src/commands/testing/*
+whiteboard/
+whiteboard/*/
+dump.rdb
 
 # Logs
 logs
