@@ -25,7 +25,7 @@
     "homepage": "https://github.com/Lyonlancer5/Haruo",
     "dependencies": {
         "dotenv": "^8.2.0",
-        "eris": "^0.14.0",
+        "eris": "^0.15.0",
         "yamljs": "^0.3.0"
     },
     "devDependencies": {
